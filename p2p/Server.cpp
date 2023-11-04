@@ -1,11 +1,27 @@
-#include "Server.h"
+// The Server struct is used as the basis for noeds that need to operate as servers.
+// Server connects to the network and listens on a given port.
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <string>
+#include <sys/socket.h>
+#include <netinet/in.h>
 
 // Constructors
 
-struct Server server_constructor(int domain, int service, int protocol, unsigned long interface, int port, int backlog)
+// Define Server struct
+struct Server
+{
+    int domain;
+    int service;
+    int protocol;
+    u_long interface;
+    int port;
+    int backlog;
+    struct sockaddr_in address;
+    int socket;
+};
+
+struct Server server_constructor(int domain, int service, int protocol, u_long interface, int port, int backlog)
 {
     struct Server server;
     

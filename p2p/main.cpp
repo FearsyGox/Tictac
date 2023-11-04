@@ -1,6 +1,6 @@
 //#include "../libeom.h"
-#include "Server.h"
-#include "Client.h"
+#include "Server.cpp"
+#include "Client.cpp"
 #include <pthread.h>
 #include <thread>
 #include <bits/stdc++.h>    // memset

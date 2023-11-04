@@ -1,11 +1,30 @@
-#include "Client.h"
 
 #include <stdlib.h>
 #include <arpa/inet.h>
 #include <string.h>
 #include <unistd.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <stdio.h>
+
+using namespace std;
 
 char *request(struct Client *client, char *server_ip, void *request, unsigned long size);
+
+struct Client
+{
+    // network socket for handling connections
+    int socket;
+
+    int domain;
+    int service;
+    int protocol;
+    int port;
+    unsigned long interface;
+
+    // request method allows a client to make a request of a specified server
+    char *(*request)(struct Client *client, char *serverr_ip, void *request, unsigned long size);
+};
 
 struct Client client_constructor(int domain, int service, int protocol, int port, u_long interface)
 {
