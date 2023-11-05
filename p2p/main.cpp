@@ -11,6 +11,8 @@ using namespace std;
 
 void server_function()
 {
+    printf("server running...\n");
+
     // Port 1248, Backlog 20
     // AF_INET - ipv4, AF_INET6 - ipv6
     struct Server server = server_constructor(AF_INET, SOCK_STREAM, 0, INADDR_ANY, 1248, 20);
@@ -37,7 +39,7 @@ void server_function()
         // if this is the case the program could be simplified
         char request[255];
         memset(request, 0, 255);    // clear the memory to avoid errors
-        write(client, request, 255);
+        read(client, request, 255);
         cout << request << endl;
         close(client);
     }
@@ -75,7 +77,7 @@ int main()
     {
         char request[255];
         memset(request, 0, 255);
-        cin >> request;
+        fgets(request, 255, stdin);
         client_function(request);
 
     }
