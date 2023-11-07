@@ -8,9 +8,11 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
-int startServer() {
+// server_clientSocket refers to the client's socket that is stored on the server
+// this is different from the clientSocket in client.h, this naming convention is used to avoid conflict in p2p.cpp
+
+int startServer(int serverSocket, int server_clientSocket, int port) {
     // Create a socket
-    int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket == -1) {
         std::cerr << "Error creating socket\n";
         return -1;
@@ -19,7 +21,7 @@ int startServer() {
     // Bind the socket to an address and port
     sockaddr_in serverAddress;
     serverAddress.sin_family = AF_INET;
-    serverAddress.sin_port = htons(12345);  // Port number
+    serverAddress.sin_port = htons(port);  // Port number
     serverAddress.sin_addr.s_addr = INADDR_ANY;  // Accept connections from any address
 
     if (bind(serverSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) == -1) {
@@ -40,8 +42,8 @@ int startServer() {
     // Accept a connection
     sockaddr_in clientAddress;
     socklen_t clientSize = sizeof(clientAddress);
-    int clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddress, &clientSize);
-    if (clientSocket == -1) {
+    int server_clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddress, &clientSize);
+    if (server_clientSocket == -1) {
         std::cerr << "Error accepting connection\n";
         close(serverSocket);
         return -1;
@@ -49,15 +51,15 @@ int startServer() {
 
     std::cout << "Connection accepted from " << inet_ntoa(clientAddress.sin_addr) << ":" << ntohs(clientAddress.sin_port) << "\n";
 
-    // Send data to the client
-    const char* message = "Hello, client!";
-    send(clientSocket, message, strlen(message), 0);
-
-    // Close the sockets
-    close(clientSocket);
-    close(serverSocket);
-
     return 0;
 }
+
+int closeServer(int serverSocket, int server_clientSocket) {
+    // Close the sockets
+    close(server_clientSocket);
+    close(serverSocket);
+    return 0;
+}
+
 
 #endif

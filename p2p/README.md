@@ -24,3 +24,8 @@ To run the client, use the following command:
 ./p2p.out 127.0.0.1
 ```
 
+### Resources
+
+- **www.chatgpt.com**
+
+   Both client.h and server.h contain code that was obtained from ChatGpt. This structure of setting up simple client-server sockets is common and the code can be found across multiple resources online.

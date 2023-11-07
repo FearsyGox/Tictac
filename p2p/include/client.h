@@ -8,9 +8,9 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
-int startClient(char *ip) {
+// ip and port refer to the server's ip and port
+int startClient(int clientSocket, char *ip, int port) {
     // Create a socket
-    int clientSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (clientSocket == -1) {
         std::cerr << "Error creating socket\n";
         return -1;
@@ -19,7 +19,7 @@ int startClient(char *ip) {
     // Connect to the server
     sockaddr_in serverAddress;
     serverAddress.sin_family = AF_INET;
-    serverAddress.sin_port = htons(12345);  // Port number
+    serverAddress.sin_port = htons(port);  // Port number
     serverAddress.sin_addr.s_addr = inet_addr(ip);  // Server IP address
 
     if (connect(clientSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) == -1) {
@@ -30,19 +30,14 @@ int startClient(char *ip) {
 
     std::cout << "Connected to server\n";
 
-    // Receive data from the server
-    char buffer[1024];
-    ssize_t bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0);
-    if (bytesRead == -1) {
-        std::cerr << "Error receiving data\n";
-    } else {
-        buffer[bytesRead] = '\0';  // Null-terminate the received data
-        std::cout << "Received from server: " << buffer << "\n";
-    }
+   
 
+    return 0;
+}
+
+int closeClient(int clientSocket) {
     // Close the socket
     close(clientSocket);
-
     return 0;
 }
 
