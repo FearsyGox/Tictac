@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <unistd.h>
 
 // Constructors
 
@@ -19,12 +20,17 @@ struct Server
     int backlog;
     struct sockaddr_in address;
     int socket;
+
+    ~Server()
+    {
+        close(socket);
+    }
 };
 
 struct Server server_constructor(int domain, int service, int protocol, u_long interface, int port, int backlog)
 {
     struct Server server;
-    
+
     // Define basic parameters of the server.
     server.domain = domain;
     server.service = service;
@@ -49,14 +55,14 @@ struct Server server_constructor(int domain, int service, int protocol, u_long i
     }
 
     // Attempt to bind the socket to the network
-    if ((bind(server.socket, (struct sockaddr *)&server.address, sizeof(server.address)))<0)
+    if ((bind(server.socket, (struct sockaddr *)&server.address, sizeof(server.address))) < 0)
     {
         perror("Failed to bind socket...\n");
         exit(1);
     }
 
     // Start listenening on the network with the socket and a given backlog
-    if ((listen(server.socket, server.backlog))<0)
+    if ((listen(server.socket, server.backlog)) < 0)
     {
         perror("Failed to start listening...\n");
         exit(1);

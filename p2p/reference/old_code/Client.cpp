@@ -23,7 +23,7 @@ struct Client
     unsigned long interface;
 
     // request method allows a client to make a request of a specified server
-    char *(*request)(struct Client *client, char *serverr_ip, void *request, unsigned long size);
+    char *(*request)(struct Client *client, char *server_ip, void *request, unsigned long size);
 };
 
 struct Client client_constructor(int domain, int service, int protocol, int port, u_long interface)
