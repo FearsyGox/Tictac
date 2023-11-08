@@ -11,12 +11,7 @@
 // server_clientSocket refers to the client's socket that is stored on the server
 // this is different from the clientSocket in client.h, this naming convention is used to avoid conflict in p2p.cpp
 
-int startServer(int serverSocket, int server_clientSocket, int port) {
-    // Create a socket
-    if (serverSocket == -1) {
-        std::cerr << "Error creating socket\n";
-        return -1;
-    }
+int startServer(int serverSocket, int *server_clientSocket, int port) {
 
     // Bind the socket to an address and port
     sockaddr_in serverAddress;
@@ -42,10 +37,12 @@ int startServer(int serverSocket, int server_clientSocket, int port) {
     // Accept a connection
     sockaddr_in clientAddress;
     socklen_t clientSize = sizeof(clientAddress);
-    int server_clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddress, &clientSize);
-    if (server_clientSocket == -1) {
+    *server_clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddress, &clientSize);
+
+    if (*server_clientSocket == -1) {
         std::cerr << "Error accepting connection\n";
         close(serverSocket);
+        close(*server_clientSocket);
         return -1;
     }
 

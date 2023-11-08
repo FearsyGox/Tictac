@@ -10,12 +10,7 @@
 
 // ip and port refer to the server's ip and port
 int startClient(int clientSocket, char *ip, int port) {
-    // Create a socket
-    if (clientSocket == -1) {
-        std::cerr << "Error creating socket\n";
-        return -1;
-    }
-
+   
     // Connect to the server
     sockaddr_in serverAddress;
     serverAddress.sin_family = AF_INET;
@@ -29,8 +24,6 @@ int startClient(int clientSocket, char *ip, int port) {
     }
 
     std::cout << "Connected to server\n";
-
-   
 
     return 0;
 }
