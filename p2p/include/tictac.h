@@ -16,6 +16,8 @@ void printtictac(int (&board)[9])
 	}
 }
 
+void validateMove();
+
 void displayRules(char letter)
 {
 	int displayBoard[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};

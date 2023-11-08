@@ -4,6 +4,8 @@
 #define UTILS_H
 
 #include <regex>
+#include <limits>
+#include <iostream>
 
 bool detectMode(int argc, char *argv[])
 {
@@ -36,39 +38,51 @@ bool detectMode(int argc, char *argv[])
     }
 }
 
-bool getMove(int *board, char *message, int size)
+bool getMove(int *board, char *message, int maxSize)
 {
-    // stop program if user types "done"
-
     cout << "Enter move: ";
 
-    char temp;
     bool valid = false;
-    while (!valid) // loop until valid move is entered
+    char temp;
+
+    while (!valid)
     {
         valid = true;
-        cin.getline(message, sizeof(message));
+        cin.getline(message, maxSize);
 
-        if (strcmp(message, "done") == 0)
+        if (cin.fail())
+        {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input. Try again." << endl;
+            valid = false;
+            continue;
+        }
+
+        if (strlen(message) == 4 && strncmp(message, "done", 4) == 0)
         {
             return true;
         }
-        else if (strlen(message) !=1)
+
+        if (strlen(message) != 1)
         {
-            cout << "Invalid move, try again: " << endl;
+            cout << "Invalid move. Enter a single digit (1-9):" << endl;
             valid = false;
+            continue;
         }
 
-        temp = message[0] - '0' - 1;
-
-        if (temp < 0 || temp > 8)
+        temp = message[0] - '0';
+        if (temp < 1 || temp > 9)
         {
-            cout << "Invalid move, try again: " << endl;
+            cout << "Invalid move. Enter a digit from 1 to 9:" << endl;
             valid = false;
+            continue;
         }
-        else if (board[temp] != 0)
+
+        int index = temp - 1;
+        if (board[index] != 0)
         {
-            cout << "Square is occupied, try again: " << endl;
+            cout << "Square is occupied. Please choose an empty square:" << endl;
             valid = false;
         }
     }

@@ -34,14 +34,8 @@ int startClient(int clientSocket, char *ip, int port)
 
 // client sends a message to the server
 // size is size of message
-bool clientSendMessage(const int clientSocket, char *message, int size)
+bool clientSendMessage(const int clientSocket, char message[], int size)
 {
-    if (strcmp(message, "done") == 0)
-        {
-            cout << "Exiting..." << endl;
-            return false;
-        }
-
     // send message
     if (send(clientSocket, message, strlen(message), 0) == -1)
     {
@@ -49,6 +43,13 @@ bool clientSendMessage(const int clientSocket, char *message, int size)
         close(clientSocket);
         return false;
     }
+
+    if (strcmp(message, "done") == 0)
+    {
+        cout << "Exiting..." << endl;
+        return false;
+    }
+
     return true;
 }
 

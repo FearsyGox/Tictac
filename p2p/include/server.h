@@ -89,17 +89,16 @@ bool serverGetResponse(int server_clientSocket, char *response)
 }
 
 bool serverSendMessage(int server_clientSocket, char *message, int size)
-{
-    // message[bytesRead] = '\0'; // null-terminate
-
+{    
     // send message
+    send(server_clientSocket, message, strlen(message), 0);
+    // DOES SERVER_CLIENT SOCKET NEED TO BE CLOSED HERE???????
+
     if (strcmp(message, "done") == 0)
     {
         cout << "Exiting..." << endl;
         return false;
     }
-    // send message
-    send(server_clientSocket, message, strlen(message), 0);
 
     return true;
 }
