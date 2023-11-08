@@ -36,4 +36,44 @@ bool detectMode(int argc, char *argv[])
     }
 }
 
+bool getMove(int *board, char *message, int size)
+{
+    // stop program if user types "done"
+
+    cout << "Enter move: ";
+
+    char temp;
+    bool valid = false;
+    while (!valid) // loop until valid move is entered
+    {
+        valid = true;
+        cin.getline(message, sizeof(message));
+
+        if (strcmp(message, "done") == 0)
+        {
+            return true;
+        }
+        else if (strlen(message) !=1)
+        {
+            cout << "Invalid move, try again: " << endl;
+            valid = false;
+        }
+
+        temp = message[0] - '0' - 1;
+
+        if (temp < 0 || temp > 8)
+        {
+            cout << "Invalid move, try again: " << endl;
+            valid = false;
+        }
+        else if (board[temp] != 0)
+        {
+            cout << "Square is occupied, try again: " << endl;
+            valid = false;
+        }
+    }
+
+    return true;
+}
+
 #endif

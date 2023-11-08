@@ -11,15 +11,17 @@
 using namespace std;
 
 // ip and port refer to the server's ip and port
-int startClient(int clientSocket, char *ip, int port) {
-   
+int startClient(int clientSocket, char *ip, int port)
+{
+
     // Connect to the server
     sockaddr_in serverAddress;
     serverAddress.sin_family = AF_INET;
-    serverAddress.sin_port = htons(port);  // Port number
-    serverAddress.sin_addr.s_addr = inet_addr(ip);  // Server IP address
+    serverAddress.sin_port = htons(port);          // Port number
+    serverAddress.sin_addr.s_addr = inet_addr(ip); // Server IP address
 
-    if (connect(clientSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) == -1) {
+    if (connect(clientSocket, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) == -1)
+    {
         std::cerr << "Error connecting to server\n";
         close(clientSocket);
         return -1;
@@ -31,23 +33,20 @@ int startClient(int clientSocket, char *ip, int port) {
 }
 
 // client sends a message to the server
-bool clientSendMessage(const int clientSocket, char *message)
+// size is size of message
+bool clientSendMessage(const int clientSocket, char *message, int size)
 {
-    // send message
-    cout << "Enter move: ";
-    cin.getline(message, sizeof(message));
+    if (strcmp(message, "done") == 0)
+        {
+            cout << "Exiting..." << endl;
+            return false;
+        }
 
-    // memset(message, 0, SIZE);
+    // send message
     if (send(clientSocket, message, strlen(message), 0) == -1)
     {
         cerr << "Error sending data\n";
         close(clientSocket);
-        return false;
-    }
-
-    if (strcmp(message, "done") == 0)
-    {
-        cout << "Exiting..." << endl;
         return false;
     }
     return true;
@@ -75,9 +74,8 @@ bool clientGetResponse(const int clientSocket, char *response)
     return true;
 }
 
-
-
-int closeClient(int clientSocket) {
+int closeClient(int clientSocket)
+{
     // Close the socket
     close(clientSocket);
     return 0;

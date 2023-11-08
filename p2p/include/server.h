@@ -13,22 +13,25 @@ using namespace std;
 // server_clientSocket refers to the client's socket that is stored on the server
 // this is different from the clientSocket in client.h, this naming convention is used to avoid conflict in p2p.cpp
 
-int startServer(int serverSocket, int *server_clientSocket, int port) {
+int startServer(int serverSocket, int *server_clientSocket, int port)
+{
 
     // Bind the socket to an address and port
     sockaddr_in serverAddress;
     serverAddress.sin_family = AF_INET;
-    serverAddress.sin_port = htons(port);  // Port number
-    serverAddress.sin_addr.s_addr = INADDR_ANY;  // Accept connections from any address
+    serverAddress.sin_port = htons(port);       // Port number
+    serverAddress.sin_addr.s_addr = INADDR_ANY; // Accept connections from any address
 
-    if (bind(serverSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) == -1) {
+    if (bind(serverSocket, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) == -1)
+    {
         std::cerr << "Error binding socket\n";
         close(serverSocket);
         return -1;
     }
 
     // Listen for incoming connections
-    if (listen(serverSocket, 5) == -1) {
+    if (listen(serverSocket, 5) == -1)
+    {
         std::cerr << "Error listening for connections\n";
         close(serverSocket);
         return -1;
@@ -39,9 +42,10 @@ int startServer(int serverSocket, int *server_clientSocket, int port) {
     // Accept a connection
     sockaddr_in clientAddress;
     socklen_t clientSize = sizeof(clientAddress);
-    *server_clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddress, &clientSize);
+    *server_clientSocket = accept(serverSocket, (struct sockaddr *)&clientAddress, &clientSize);
 
-    if (*server_clientSocket == -1) {
+    if (*server_clientSocket == -1)
+    {
         std::cerr << "Error accepting connection\n";
         close(serverSocket);
         close(*server_clientSocket);
@@ -53,7 +57,8 @@ int startServer(int serverSocket, int *server_clientSocket, int port) {
     return 0;
 }
 
-int closeServer(int serverSocket, int server_clientSocket) {
+int closeServer(int serverSocket, int server_clientSocket)
+{
     // Close the sockets
     close(server_clientSocket);
     close(serverSocket);
@@ -83,21 +88,20 @@ bool serverGetResponse(int server_clientSocket, char *response)
     return true;
 }
 
-bool serverSendMessage(int server_clientSocket, char *message)
+bool serverSendMessage(int server_clientSocket, char *message, int size)
 {
-    // send message
-    cout << "Enter move: ";
-    cin.getline(message, sizeof(message));
     // message[bytesRead] = '\0'; // null-terminate
-    send(server_clientSocket, message, strlen(message), 0);
 
+    // send message
     if (strcmp(message, "done") == 0)
     {
         cout << "Exiting..." << endl;
         return false;
     }
+    // send message
+    send(server_clientSocket, message, strlen(message), 0);
+
     return true;
 }
-
 
 #endif
