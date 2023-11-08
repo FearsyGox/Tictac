@@ -61,41 +61,25 @@ int main(int argc, char *argv[])
 bool updateGame(int *board, char move[SIZE], char letter)
 {
     int position = move[0] - '0' - 1;
-    cout << "position: " << position << endl;
-    cout << "letter: " << letter << endl;
     if (letter == 'X')
     {
         board[position] = 1;
-        cout << "board[position]: " << board[position] << endl;
     }
     if (letter == 'O')
     {
         board[position] = 2;
-        cout << "board[position]: " << board[position] << endl;
     }
-    
+
     // game not over
     return false;
-    
+
     // CHECK IF GAME IS OVER HERE!!!!!!!!!
     // PRINT RESULT IF GAME IS OVER!!!!!!!!
     // THEN RETURN FALSE, OUTER FUNCTION SHOULD HANDLE THE REST!!!!!!!!!!
-
 }
 
-void printBoard(int board[SIZE])
-{
-    for (int i = 0; i < SIZE; i++)
-    {
-        cout << board[i] << " ";
-        if ((i + 1) % 3 == 0)
-        {
-            cout << endl;
-        }
-    }
-}
-
-// NOTE: the send message block of code and recieve message could be made into its own function
+// client starts game, gets move from user, sends message, recieves response
+// continue this loop until game is over or someone quits
 int clientStartGame(const int clientSocket)
 {
     bool endOfGame = false;
@@ -115,7 +99,7 @@ int clientStartGame(const int clientSocket)
 
         // get move, send message
         getMove(board, message, SIZE);
-        if (!clientSendMessage(clientSocket, message, SIZE))
+        if (!clientSendMessage(clientSocket, message))
         {
             // either client quit or error occured
             break;
@@ -136,7 +120,7 @@ int clientStartGame(const int clientSocket)
         cout << "Waiting for server to make a move..." << endl;
         if (!clientGetResponse(clientSocket, response))
             break;
-        cout << "Server Move: " << response << endl;
+        cout << "Server Move: " << endl;
 
         // update game, check for end of game
         if (updateGame(board, response, 'O'))
@@ -149,6 +133,8 @@ int clientStartGame(const int clientSocket)
     return 0;
 }
 
+// server starts game, recieves response, gets move, sends message
+// continue this loop until game is over or someone quits
 int serverStartGame(int server_clientSocket)
 {
     bool endOfGame = false;
@@ -170,8 +156,8 @@ int serverStartGame(int server_clientSocket)
         cout << "Waiting for client to make a move..." << endl;
         if (!serverGetResponse(server_clientSocket, response))
             break;
-        cout << "Client Move: " << response << endl;
-        
+        cout << "Client Move: " << endl;
+
         // update game, check for end of game
         if (updateGame(board, response, 'X'))
         {
@@ -185,7 +171,7 @@ int serverStartGame(int server_clientSocket)
 
         // get move, send message
         getMove(board, message, SIZE);
-        if (!serverSendMessage(server_clientSocket, message, SIZE))
+        if (!serverSendMessage(server_clientSocket, message))
             break;
 
         // update game and check for end of game

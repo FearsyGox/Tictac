@@ -7,6 +7,7 @@
 #include <limits>
 #include <iostream>
 
+
 bool detectMode(int argc, char *argv[])
 {
     if (argc > 2)

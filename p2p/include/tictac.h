@@ -8,27 +8,46 @@ void printtictac(int (&board)[9])
 {
 	for (int i = 0; i < 9; ++i)
 	{
-		cout << board[i] << ",";
+		if (board[i] == 0)
+		{
+			cout << "-";
+		}else if(board[i] == 1)
+		{
+			cout << "X";
+		}else if(board[i] == 2)
+		{
+			cout << "O";
+		}
+	
 		if (((i + 1) % 3) == 0)
 		{
 			cout << endl;
+			continue;
 		}
+
+		cout << " | ";
 	}
 }
 
-void validateMove();
-
 void displayRules(char letter)
 {
-	int displayBoard[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-
 	cout << endl
 		 << "Game started: " << endl;
 	cout << "Rules: " << endl;
 	cout << endl
 		 << "on your turn ONLY... type 'done' to quit.." << endl;
 	cout << "You are " << letter << "'s, to make a move type the corresponding number" << endl;
-	printtictac(displayBoard);
+	for(int i = 1; i < 10; i++)
+	{
+		cout << i;
+		if(i % 3 == 0)
+		{
+			cout << endl;
+			continue;
+		}
+		cout << " | ";
+	
+	}
 	cout << endl;
 }
 
