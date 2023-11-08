@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
+using namespace std;
+
 // ip and port refer to the server's ip and port
 int startClient(int clientSocket, char *ip, int port) {
    
@@ -27,6 +29,53 @@ int startClient(int clientSocket, char *ip, int port) {
 
     return 0;
 }
+
+// client sends a message to the server
+bool clientSendMessage(const int clientSocket, char *message)
+{
+    // send message
+    cout << "Enter move: ";
+    cin.getline(message, sizeof(message));
+
+    // memset(message, 0, SIZE);
+    if (send(clientSocket, message, strlen(message), 0) == -1)
+    {
+        cerr << "Error sending data\n";
+        close(clientSocket);
+        return false;
+    }
+
+    if (strcmp(message, "done") == 0)
+    {
+        cout << "Exiting..." << endl;
+        return false;
+    }
+    return true;
+}
+
+// client recieves a response from the server
+bool clientGetResponse(const int clientSocket, char *response)
+{
+    // recieve message
+    int bytesRead = recv(clientSocket, response, sizeof(response), 0);
+    response[bytesRead] = '\0'; // null-terminate response
+    if (bytesRead == -1)
+    {
+        cerr << "Error receiving response\n";
+        send(clientSocket, "done", 4, 0); // tell server to exit
+        close(clientSocket);
+        return false;
+    }
+
+    if (strcmp(response, "done") == 0)
+    {
+        cout << "Other player quit game, exiting..." << endl;
+        return false;
+    }
+    return true;
+}
+
+
 
 int closeClient(int clientSocket) {
     // Close the socket

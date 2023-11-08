@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
+using namespace std;
+
 // server_clientSocket refers to the client's socket that is stored on the server
 // this is different from the clientSocket in client.h, this naming convention is used to avoid conflict in p2p.cpp
 
@@ -56,6 +58,45 @@ int closeServer(int serverSocket, int server_clientSocket) {
     close(server_clientSocket);
     close(serverSocket);
     return 0;
+}
+
+bool serverGetResponse(int server_clientSocket, char *response)
+{
+    // recieve message
+    int bytesRead = recv(server_clientSocket, response, sizeof(response), 0);
+    response[bytesRead] = '\0'; // Null-terminate the received data
+
+    if (bytesRead == -1)
+    {
+        cerr << "Error receiving data\n";
+        send(server_clientSocket, "done", 4, 0); // tell client to exit
+        close(server_clientSocket);
+        return false;
+    }
+
+    if (strcmp(response, "done") == 0)
+    {
+        cout << "Other player quit game, exiting..." << endl;
+        return false; // exit game
+    }
+
+    return true;
+}
+
+bool serverSendMessage(int server_clientSocket, char *message)
+{
+    // send message
+    cout << "Enter move: ";
+    cin.getline(message, sizeof(message));
+    // message[bytesRead] = '\0'; // null-terminate
+    send(server_clientSocket, message, strlen(message), 0);
+
+    if (strcmp(message, "done") == 0)
+    {
+        cout << "Exiting..." << endl;
+        return false;
+    }
+    return true;
 }
 
 
