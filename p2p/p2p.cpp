@@ -1,13 +1,17 @@
 #include "include/server.h" // startServer()
 #include "include/client.h" // startClient()
 #include "include/utils.h"  // detectMode()
+#include "include/tictac.h" // tictac game funcitons
 #include <fcntl.h>
 #include <iostream>
 
+const int SIZE = 10;
+
+
 using namespace std;
 
-int startGameClient(int clientSocket);
-int startGameServer(int server_clientSocket);
+int startGameClient(const int clientSocket);
+int startGameServer(const int server_clientSocket);
 
 int main(int argc, char *argv[])
 {
@@ -16,7 +20,6 @@ int main(int argc, char *argv[])
     int serverPort = 12345;
 
     // server_clientSocket refers to the client's socket that is stored on the server
-    int server_clientSocket = -1;
 
     // Client and Server follow different logic
     if (isClient)
@@ -36,6 +39,7 @@ int main(int argc, char *argv[])
     else // server
     {
         // Create a socket
+        int server_clientSocket = -1;
         int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
         if (serverSocket == -1)
         {
@@ -44,50 +48,74 @@ int main(int argc, char *argv[])
         }
 
         startServer(serverSocket, &server_clientSocket, serverPort);
-        cout << "server_clientSocket << " << server_clientSocket << endl;
+        cout << "\tserver_clientSocket << " << server_clientSocket << endl;
         startGameServer(server_clientSocket);
         closeServer(serverSocket, server_clientSocket);
     }
     return 0;
 }
 
-int startGameClient(int clientSocket)
+void clientSendMessage(const int clientSocket, char *message)
 {
-    cout << endl
-         << "Game started" << endl;
-    cout << "\ttype exit to quit" << endl;
-    bool gameRunning = true;
-
-    while (gameRunning)
-    {
-        char message[256];
-        cout << "Enter a message" << endl;
+     // send message
+        cout << "Enter move: ";
         cin.getline(message, sizeof(message));
 
+        //memset(message, 0, SIZE);
         if (send(clientSocket, message, strlen(message), 0) == -1)
         {
             cerr << "Error sending data\n";
             close(clientSocket);
-            return -1;
         }
+}
 
-        if (strcmp(message, "exit") == 0)
-        {
-            break; // exit game
-        }
-
-        char response[256];
+void clientGetResponse(const int clientSocket, char *response)
+{
+    // recieve message
         int bytesRead = recv(clientSocket, response, sizeof(response), 0);
+        response[bytesRead] = '\0'; // null-terminate response
         if (bytesRead == -1)
         {
             cerr << "Error receiving response\n";
-            // send(clientSocket, "close", 5, 0);
+            send(clientSocket, "done", 4, 0);       // tell server to exit
             close(clientSocket);
-            return -1;
+        }
+}
+
+// NOTE: the send message block of code and recieve message could be made into its own function
+int startGameClient(const int clientSocket)
+{
+    cout << endl
+         << "Game started: type 'done' to quit" << endl;
+    bool gameRunning = true;
+    int board[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+    char message[SIZE];
+    char response[SIZE];
+
+
+    // start game
+    while (gameRunning)
+    {
+        printtictac(board);
+        clientSendMessage(clientSocket, message);
+
+        // exit game
+        if (strcmp(message, "done") == 0)
+        {
+            cout << "Exiting..." << endl;
+            break;
         }
 
-        response[bytesRead] = '\0'; // Null-terminate the received data, DO WE NEED THIS????
-        cout << response << endl;
+        clientGetResponse(clientSocket, response);
+
+        // exit game on servers request
+        if (strcmp(response, "done") == 0)
+        {
+            cout << "Other player quit game, exiting..." << endl;
+            break; // exit game
+        }
+
+        cout << "\t" << response << endl;
     }
 
     return 0;
@@ -95,31 +123,62 @@ int startGameClient(int clientSocket)
 
 int startGameServer(int server_clientSocket)
 {
-    cout << endl
-         << "Game started" << endl;
+    bool gameRunning = true;
+    int board[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    
-        char message[256];
-        int bytesRead = recv(server_clientSocket, message, sizeof(message), 0);
+    char response[SIZE];
+    char message[SIZE];
+
+    cout << endl
+         << "Game started: type 'done' to quit.." << endl;
+    cout << "Waiting for client to make a move..." << endl
+         << endl;
+
+    while (gameRunning)
+    {
+
+        // recieve message
+        //memset(message, 0, SIZE);
+        int bytesRead = recv(server_clientSocket, response, sizeof(response), 0);
+        response[bytesRead] = '\0'; // Null-terminate the received data
+
         if (bytesRead == -1)
         {
             cerr << "Error receiving data\n";
+            send(server_clientSocket, "done", 4, 0); // tell client to exit
             close(server_clientSocket);
             return -1;
         }
 
-        message[bytesRead] = '\0'; // Null-terminate the received data
-        cout << "Received from client: " << message << endl;
-
-        char response[256] = "Server response: ";
-        send(server_clientSocket, response, strlen(response), 0);
-
-        if (strcmp(message, "exit") == 0)
+        // exit game on clients request
+        if (strcmp(response, "done") == 0)
         {
-            close(server_clientSocket);
-            // break; // exit game
+            cout << "Other player quit game, exiting..." << endl;
+            break; // exit game
         }
-    
 
+        cout << "\t" << response << endl;
+
+        // send message
+        cout << "Enter move: ";
+       // memset(response, 0, SIZE);
+        cin.getline(message, sizeof(message));
+        message[bytesRead] = '\0'; // null-terminate response
+
+        send(server_clientSocket, message, strlen(message), 0);
+
+        // exit game on servers request
+        if (strcmp(message, "done") == 0)
+        {
+            cout << "Exiting..." << endl;
+            break;
+        }
+    }
+
+    return 0;
+}
+
+int gameState(char *state)
+{
     return 0;
 }

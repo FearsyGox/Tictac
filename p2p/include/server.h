@@ -46,7 +46,7 @@ int startServer(int serverSocket, int *server_clientSocket, int port) {
         return -1;
     }
 
-    std::cout << "Connection accepted from " << inet_ntoa(clientAddress.sin_addr) << ":" << ntohs(clientAddress.sin_port) << "\n";
+    std::cout << "\tConnection accepted from " << inet_ntoa(clientAddress.sin_addr) << ":" << ntohs(clientAddress.sin_port) << "\n";
 
     return 0;
 }
