@@ -1,3 +1,6 @@
+// Both programs can run this code and communicate with each other
+// We need to know the ip of the other memeber and add it in the client function.
+
 //#include "../libeom.h"
 #include "Server.cpp"
 #include "Client.cpp"
@@ -5,6 +8,7 @@
 #include <thread>
 #include <bits/stdc++.h>    // memset
 #include <unistd.h>
+#include <arpa/inet.h>
 
 using namespace std;
 
@@ -40,7 +44,10 @@ void server_function()
         char request[255];
         memset(request, 0, 255);    // clear the memory to avoid errors
         read(client, request, 255);
-        cout << request << endl;
+
+        // print the request
+        // inet_ntoa (from arpa/inet.h) converts the ip address to a string so it is readable
+        printf("\t\t%s says: %s\n", inet_ntoa(server.address.sin_addr), request);
         close(client);
     }
 }
@@ -48,6 +55,7 @@ void server_function()
 void client_function(char *request)
 {
     struct Client client = client_constructor(AF_INET, SOCK_STREAM, 0, 1248, INADDR_ANY);   // INADDR_ANY allows binding on any socket
+    
     
     // 127.0.0.1 is loopback address to self, localhost
     char server_ip[] = "127.0.0.1";
