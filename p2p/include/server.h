@@ -10,10 +10,10 @@
 
 using namespace std;
 
-// server_clientSocket refers to the client's socket that is stored on the server
+// welcomeSocket refers to the client's socket that is stored on the server
 // this is different from the clientSocket in client.h, this naming convention is used to avoid conflict in p2p.cpp
 
-int startServer(int serverSocket, int *server_clientSocket, int port)
+int startServer(int serverSocket, int *welcomeSocket, int port)
 {
 
     // Bind the socket to an address and port
@@ -42,13 +42,13 @@ int startServer(int serverSocket, int *server_clientSocket, int port)
     // Accept a connection
     sockaddr_in clientAddress;
     socklen_t clientSize = sizeof(clientAddress);
-    *server_clientSocket = accept(serverSocket, (struct sockaddr *)&clientAddress, &clientSize);
+    *welcomeSocket = accept(serverSocket, (struct sockaddr *)&clientAddress, &clientSize);
 
-    if (*server_clientSocket == -1)
+    if (*welcomeSocket == -1)
     {
         std::cerr << "Error accepting connection\n";
         close(serverSocket);
-        close(*server_clientSocket);
+        close(*welcomeSocket);
         return -1;
     }
 
@@ -57,25 +57,25 @@ int startServer(int serverSocket, int *server_clientSocket, int port)
     return 0;
 }
 
-int closeServer(int serverSocket, int server_clientSocket)
+int closeServer(int serverSocket, int welcomeSocket)
 {
     // Close the sockets
-    close(server_clientSocket);
+    close(welcomeSocket);
     close(serverSocket);
     return 0;
 }
 
-bool serverGetResponse(int server_clientSocket, char *response)
+bool serverGetResponse(int welcomeSocket, char *response)
 {
     // recieve message
-    int bytesRead = recv(server_clientSocket, response, sizeof(response), 0);
+    int bytesRead = recv(welcomeSocket, response, sizeof(response), 0);
     response[bytesRead] = '\0'; // Null-terminate the received data
 
     if (bytesRead == -1)
     {
         cerr << "Error receiving data\n";
-        send(server_clientSocket, "done", 4, 0); // tell client to exit
-        close(server_clientSocket);
+        send(welcomeSocket, "done", 4, 0); // tell client to exit
+        close(welcomeSocket);
         return false;
     }
 
@@ -88,10 +88,10 @@ bool serverGetResponse(int server_clientSocket, char *response)
     return true;
 }
 
-bool serverSendMessage(int server_clientSocket, char *message)
+bool serverSendMessage(int welcomeSocket, char *message)
 {    
     // send message
-    send(server_clientSocket, message, strlen(message), 0);
+    send(welcomeSocket, message, strlen(message), 0);
 
     if (strcmp(message, "done") == 0)
     {
