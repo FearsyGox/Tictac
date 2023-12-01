@@ -83,7 +83,6 @@ bool updateGame(int *board, char move[SIZE], char letter)
 // continue this loop until game is over or someone quits
 int clientStartGame(const int clientSocket)
 {
-    bool endOfGame = false;
     int board[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     char letter = 'X';
     char response[SIZE];
@@ -92,7 +91,7 @@ int clientStartGame(const int clientSocket)
     displayRules(letter);
 
     // start game
-    while (!endOfGame)
+    while (true)
     {
         // display board
         printtictac(board);
