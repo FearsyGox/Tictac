@@ -13,7 +13,6 @@ using namespace std;
 // ip and port refer to the server's ip and port
 int startClient(int clientSocket, char *ip, int port)
 {
-
     // Connect to the server
     sockaddr_in serverAddress;
     serverAddress.sin_family = AF_INET;

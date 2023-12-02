@@ -7,6 +7,9 @@
 #include <cstring>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <thread>
+
+const int MAX_GAMES = 10;
 
 using namespace std;
 
@@ -24,7 +27,7 @@ int startServer(int serverSocket, int *welcomeSocket, int port)
 
     if (bind(serverSocket, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) == -1)
     {
-        std::cerr << "Error binding socket\n";
+        cerr << "Error binding socket\n";
         close(serverSocket);
         return -1;
     }
@@ -37,22 +40,27 @@ int startServer(int serverSocket, int *welcomeSocket, int port)
         return -1;
     }
 
-    std::cout << "Server listening on port 12345...\n";
+    cout << "Server listening on port 12345...\n";
 
-    // Accept a connection
-    sockaddr_in clientAddress;
-    socklen_t clientSize = sizeof(clientAddress);
-    *welcomeSocket = accept(serverSocket, (struct sockaddr *)&clientAddress, &clientSize);
-
-    if (*welcomeSocket == -1)
+    while (true)
     {
-        std::cerr << "Error accepting connection\n";
-        close(serverSocket);
-        close(*welcomeSocket);
-        return -1;
-    }
+        // Accept a connection
+        sockaddr_in clientAddress;
+        socklen_t clientSize = sizeof(clientAddress);
+        *welcomeSocket = accept(serverSocket, (struct sockaddr *)&clientAddress, &clientSize);
 
-    std::cout << "\tConnection accepted from " << inet_ntoa(clientAddress.sin_addr) << ":" << ntohs(clientAddress.sin_port) << "\n";
+        if (*welcomeSocket == -1)
+        {
+            std::cerr << "Error accepting connection\n";
+            close(serverSocket);
+            close(*welcomeSocket);
+            return -1;
+        }
+
+        cout << "\tConnection accepted from " << inet_ntoa(clientAddress.sin_addr) << ":" << ntohs(clientAddress.sin_port) << "\n";
+        
+        thread th(startConnection, *welcomeSocket, clientAddress);
+    }
 
     return 0;
 }
@@ -89,7 +97,7 @@ bool serverGetResponse(int welcomeSocket, char *response)
 }
 
 bool serverSendMessage(int welcomeSocket, char *message)
-{    
+{
     // send message
     send(welcomeSocket, message, strlen(message), 0);
 
