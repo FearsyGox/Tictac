@@ -8,7 +8,7 @@ M2_SRC := $(SRC_DIR)/main.cpp $(SRC_DIR)/header.h $(SRC_DIR)/client.h $(SRC_DIR)
 M2_OBJ := $(M2_SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 M2_TARGET := $(BIN_DIR)/milestone2_app
 
-.PHONY: all clean milestone2
+.PHONY: all clean milestone2 run
 
 all: milestone2
 
@@ -23,6 +23,9 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 $(M2_TARGET): $(M2_OBJ)
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $^ -o $@
+
+run: milestone2
+	./$(M2_TARGET)
 
 clean:
 	rm -rf $(BIN_DIR) $(OBJ_DIR)

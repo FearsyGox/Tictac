@@ -4,11 +4,11 @@ SRC_DIR := src
 BIN_DIR := bin
 OBJ_DIR := obj
 
-M1_SRC := $(SRC_DIR)/gui/main.cpp $(SRC_DIR)/tic_tac.cpp
+M1_SRC := $(SRC_DIR)/tic_tac.cpp
 M1_OBJ := $(M1_SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 M1_TARGET := $(BIN_DIR)/milestone1_app
 
-.PHONY: all clean milestone1
+.PHONY: all clean milestone1 run
 
 all: milestone1
 
@@ -23,6 +23,9 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 $(M1_TARGET): $(M1_OBJ)
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $^ -o $@
+
+run: milestone1
+	./$(M1_TARGET)
 
 clean:
 	rm -rf $(BIN_DIR) $(OBJ_DIR)
