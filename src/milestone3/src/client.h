@@ -53,31 +53,9 @@ void makeMove(int clientSocket, char board[3][3])
     send(clientSocket, reinterpret_cast<const char *>(&col), sizeof(col), 0);
 }
 
-int runClient()
+void playerVsAI(int clientSocket)
 {
-    char gameMode;
-
-    cout << "Select your game mode: " << endl
-         << "1. Play with server AI." << endl
-         << "2. Play with other player." << endl;
-
-    cin >> gameMode;
-
-    char server_ip_addr[INET_ADDRSTRLEN];
-    cout << "Enter the server ip address: ";
-    cin >> server_ip_addr;
-
-    int clientSocket = connectToServer(server_ip_addr, 12345);
-    if (clientSocket == -1)
-        return -1;
-
-    send(clientSocket, &gameMode, sizeof(gameMode), 0);
-
-    if (gameMode == '1')
-    {
-        // play with AI
-        //-----------------------------------
-        char currentPlayer = 'X';
+    char currentPlayer = 'X';
 
         while (true)
         {
@@ -115,6 +93,33 @@ int runClient()
     stop:
         close(clientSocket);
         //-----------------------------------
+}
+
+int runClient()
+{
+    char gameMode;
+
+    cout << "Select your game mode: " << endl
+         << "1. Play with server AI." << endl
+         << "2. Play with other player." << endl;
+
+    cin >> gameMode;
+
+    char server_ip_addr[INET_ADDRSTRLEN];
+    cout << "Enter the server ip address: ";
+    cin >> server_ip_addr;
+
+    int clientSocket = connectToServer(server_ip_addr, 12345);
+    if (clientSocket == -1)
+        return -1;
+
+    send(clientSocket, &gameMode, sizeof(gameMode), 0);
+
+    if (gameMode == '1')
+    {
+        // play with AI
+        //-----------------------------------
+        playerVsAI(clientSocket);
     }
 
     else if (gameMode == '2')
