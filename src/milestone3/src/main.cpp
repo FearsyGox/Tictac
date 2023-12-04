@@ -33,7 +33,6 @@ int main()
     {
         return runClient();
     }
-
     else
     {
         std::cerr << "Invalid mode. Exiting...\n";
