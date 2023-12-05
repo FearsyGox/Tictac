@@ -1,3 +1,6 @@
+#ifndef GAME_H
+#define GAME_H
+
 #include <iostream>
 #include "header.h"
 
@@ -173,3 +176,5 @@ void playGame_(int clientSocket) {
     close(clientSocket);
 
 }
+
+#endif
