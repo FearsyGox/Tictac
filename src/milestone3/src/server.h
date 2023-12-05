@@ -83,7 +83,7 @@ void setupGame(Client *clientA)
     port[6] = '\0';
     cout << endl;
     cout << "Received port from Client B: " << endl;
-    cout << port << endl << endl;
+    cout << port << endl;;
 
     this_thread::sleep_for(chrono::seconds(1));
 
@@ -100,7 +100,8 @@ void setupGame(Client *clientA)
 
     cout << "Sending ClientB ip and port to client A" << endl;
     cout << ipAddress << endl;
-    cout << port << endl << endl;
+    cout << port << endl;
+    cout << "New game started" << endl << endl;
 
     close(clientA->socket);
     close(clientB->socket);
