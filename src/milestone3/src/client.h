@@ -115,7 +115,7 @@ int runClient()
 
     cin >> gameMode;
 
-    //! NEED TO CHANGE BACK TO OLD CODE BELOW
+    //! NEED TO CHANGE IF USED ON SEPARATE MACHINES
     char server_ip_addr[INET_ADDRSTRLEN] = "127.0.0.1";
     // cout << "Enter the server ip address: ";
     // cin >> server_ip_addr;
@@ -143,6 +143,8 @@ int runClient()
         {
             // work as a server
             //===================================================
+            cout << endl;
+            cout << "-------Acting as SERVER-------" << endl;
 
             int serverSocket;
             sockaddr_in serverAddr{}, clientAddr{};
@@ -161,13 +163,11 @@ int runClient()
             send(clientSocket, stringPort.c_str(), sizeof(port)+1, 0);
             close(clientSocket);
 
-            cout << "port: " << port << endl;
-            cout << "string port: " << stringPort << endl;
+            cout << "Creating server on port number: " << port << endl;
 
             serverAddr.sin_family = AF_INET;
             serverAddr.sin_addr.s_addr = INADDR_ANY;
             serverAddr.sin_port = htons(port);
-            // serverAddr.sin_port = htons(12346);
 
             if (bind(serverSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)
             {
@@ -198,23 +198,19 @@ int runClient()
 
         else
         {
-            char server_port_char[6];
-
             // work as a client
             //===================================================
-            cout << "Acting as client" <<endl;
+            cout << endl;
+            cout << "-------Acting as CLIENT--------" <<endl;
+
+            char server_port_char[6];
             recv(clientSocket, server_ip_addr, sizeof(server_ip_addr), 0);
             recv(clientSocket, server_port_char, sizeof(server_port_char), 0);
             close(clientSocket);
 
-            cout << "print server ip and port" << endl;
-            cout << server_ip_addr << endl;
-            cout << server_port_char << endl;
+            cout << "Connecting to server on ip address and port number " << server_ip_addr << ", " << server_port_char << endl;
 
             int server_port = atoi(server_port_char);
-
-            cout << "server port: " << server_port << endl;
-
             clientSocket = connectToServer(server_ip_addr, server_port);
             char currentPlayer = 'X';
 
@@ -258,4 +254,5 @@ int runClient()
         cout << "Invalid game mode. Exiting..." << endl;
         return -1;
     }
+    return 0;
 }

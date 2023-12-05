@@ -74,58 +74,36 @@ void setupGame(Client *clientA)
     char response[248];
     char port[6];  
 
-    cout << "sizeof (port)" << sizeof(port) << endl;
-
-
-    // Designate Client B as server. Request port number from Client B
+    // Client B is designated as server. Request port number from Client B
     send(clientB->socket, &ser, sizeof(ser), 0);
     recv(clientB->socket, response, sizeof(response), 0); 
 
-    cout << "Received port from client B: " << response << endl << endl;
-
     for (int i = 0; i < 5; i++)
-    {
         port[i] = response[i];
-    }
     port[6] = '\0';
-    cout << "this port: " << port << endl;
+    cout << endl;
+    cout << "Received port from Client B: " << endl;
+    cout << port << endl << endl;
 
-    // Sleep for 1 second
     this_thread::sleep_for(chrono::seconds(1));
 
     // Client A is designated as client
     send(clientA->socket, &cl, sizeof(cl), 0);
 
-    // Convert IP address to string
+    // Convert Client B IP address to string
     char ipAddress[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &(clientB->addr->sin_addr), ipAddress, INET_ADDRSTRLEN);
-    send(clientA->socket, ipAddress, sizeof(ipAddress), 0);
-    send(clientA->socket, port, sizeof(port), 0); // send port number to clientA
 
-    cout << "send ip and port to client A" << endl;
+    // Send Client B IP address and port number to Client A
+    send(clientA->socket, ipAddress, sizeof(ipAddress), 0);
+    send(clientA->socket, port, sizeof(port), 0); 
+
+    cout << "Sending ClientB ip and port to client A" << endl;
     cout << ipAddress << endl;
     cout << port << endl << endl;
 
     close(clientA->socket);
     close(clientB->socket);
-
-    //! OLD CODE BELOW
-
-    // send client2's ip to client2
-    //----------------------------------
-    // char ser = '0', cl = '1';
-
-    // int ClientSocket = waitingList.front();
-    // send(clients[0], &ser, sizeof(ser), 0); 
-    // send(clientSocket, &cl, sizeof(cl), 0);
-    // // send ip address
-    // char ipAddress[INET_ADDRSTRLEN];
-    // inet_ntop(AF_INET, &(clientAddr.sin_addr), ipAddress, INET_ADDRSTRLEN);
-    // send(clientSocket, ipAddress, sizeof(ipAddress), 0);
-
-    // close(clients[0]);
-    // close(clientSocket);
-    // clients.pop_back();
 }
 
 int handleThread(Client *client)

@@ -14,8 +14,6 @@ int main()
 {
 
     int mode;
-    char type;
-    char gameMode;
 
     cout << "Select mode: " << endl
          << "1. Run as a server." << endl
