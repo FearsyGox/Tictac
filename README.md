@@ -43,9 +43,9 @@ Select option 1 to run as a server.
 ```bash
 make run
 ```
-Select option 2 to run as a client and enter the IP address of the server. 
+Select option 2 to run as a client. Select if you wish to play against an AI or against a player. Now enter the IP address of the server from step 1. 
 
-At this point the client should be connected to the server. If there is another user in the waiting list, a game will automatically start with the user that is waiting. If there is no one in the waiting list, the user will be given the option to play against an AI or wait in the waiting list.
+At this point the client should be connected to the server. If there is another user in the waiting list, a game will automatically start with the user that is waiting. If there is no one in the waiting list, the user will be added to the waiting list.
 
 If any failures occur, use `make clean` to remove the output file and try again. If running the program from the same machine, use callback address `127.0.0.1`.
 
