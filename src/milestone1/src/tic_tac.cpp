@@ -4,32 +4,38 @@
 
 using namespace std;
 
-
 // Function to print the Tic-Tac-Toe board
-void printBoard(char board[3][3]) {
+void printBoard(char board[3][3])
+{
     cout << endl;
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
             cout << "| " << board[i][j] << " ";
         }
-        cout << "|"  << endl;
+        cout << "|" << endl;
     }
     cout << endl;
 }
 
 // Function to check if the current player has won
-bool checkWin(char board[3][3], char player) {
+bool checkWin(char board[3][3], char player)
+{
     // Check rows and columns
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
+    {
         if ((board[i][0] == player && board[i][1] == player && board[i][2] == player) ||
-            (board[0][i] == player && board[1][i] == player && board[2][i] == player)) {
+            (board[0][i] == player && board[1][i] == player && board[2][i] == player))
+        {
             return true;
         }
     }
 
     // Check diagonals
     if ((board[0][0] == player && board[1][1] == player && board[2][2] == player) ||
-        (board[0][2] == player && board[1][1] == player && board[2][0] == player)) {
+        (board[0][2] == player && board[1][1] == player && board[2][0] == player))
+    {
         return true;
     }
 
@@ -37,10 +43,14 @@ bool checkWin(char board[3][3], char player) {
 }
 
 // Function to check if the board is full (a tie)
-bool isBoardFull(char board[3][3]) {
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            if (board[i][j] == ' ') {
+bool isBoardFull(char board[3][3])
+{
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            if (board[i][j] == ' ')
+            {
                 return false; // Empty space found, board is not full
             }
         }
@@ -49,10 +59,12 @@ bool isBoardFull(char board[3][3]) {
 }
 
 // Function for person vs person mode
-void pvp(char board[3][3]) {
+void pvp(char board[3][3])
+{
     char currentPlayer = 'X';
 
-    while (true) {
+    while (true)
+    {
         // Print the current board
         printBoard(board);
 
@@ -60,10 +72,12 @@ void pvp(char board[3][3]) {
         int row, col;
         cout << "Player " << currentPlayer << ", enter your move (row and column): ";
         cin >> row >> col;
-        row--;col--;
+        row--;
+        col--;
 
         // Check if the move is valid
-        if (row < 0 || row > 2 || col < 0 || col > 2 || board[row][col] != ' ') {
+        if (row < 0 || row > 2 || col < 0 || col > 2 || board[row][col] != ' ')
+        {
             cout << "Invalid move. Try again.\n";
             continue;
         }
@@ -72,14 +86,16 @@ void pvp(char board[3][3]) {
         board[row][col] = currentPlayer;
 
         // Check if the current player has won
-        if (checkWin(board, currentPlayer)) {
+        if (checkWin(board, currentPlayer))
+        {
             printBoard(board);
             cout << "Player " << currentPlayer << " wins!\n";
             break;
         }
 
         // Check if the board is full (tie)
-        if (isBoardFull(board)) {
+        if (isBoardFull(board))
+        {
             printBoard(board);
             cout << "It's a tie!\n";
             break;
@@ -91,40 +107,47 @@ void pvp(char board[3][3]) {
 }
 
 // Function for person vs computer mode
-void pvAI(char board[3][3]) {
+void pvAI(char board[3][3])
+{
 
     char humanPlayer = 'O', computerPlayer = 'X';
 
     char currentPlayer = 'O';
 
-    while (true) {
+    while (true)
+    {
         int row, col;
-        if (currentPlayer == humanPlayer) { // Human player's turn
+        if (currentPlayer == humanPlayer)
+        { // Human player's turn
 
             printBoard(board);
 
             cout << "Enter your move (row and column): ";
             cin >> row >> col;
-            row--; col--;
+            row--;
+            col--;
 
-            if (row < 0 || row > 2 || col < 0 || col > 2 || board[row][col] != ' ') {
+            if (row < 0 || row > 2 || col < 0 || col > 2 || board[row][col] != ' ')
+            {
                 cout << "Invalid move. Try again.\n";
                 continue;
             }
 
             board[row][col] = humanPlayer;
 
-            if (checkWin(board, humanPlayer)) {
+            if (checkWin(board, humanPlayer))
+            {
                 printBoard(board);
                 cout << "You win!\n";
                 break;
             }
-
         }
         // Computer's turn
-        else {
+        else
+        {
             // Generate random moves for the computer
-            do {
+            do
+            {
                 row = rand() % 3;
                 col = rand() % 3;
             } while (board[row][col] != ' ');
@@ -132,14 +155,16 @@ void pvAI(char board[3][3]) {
             cout << "Computer chooses: " << row << " " << col << endl;
             board[row][col] = computerPlayer;
 
-            if (checkWin(board, computerPlayer)) {
+            if (checkWin(board, computerPlayer))
+            {
                 printBoard(board);
                 cout << "Computer wins!\n";
                 break;
             }
         }
 
-        if (isBoardFull(board)) {
+        if (isBoardFull(board))
+        {
             printBoard(board);
             cout << "It's a tie!\n";
             break;
@@ -149,30 +174,11 @@ void pvAI(char board[3][3]) {
     }
 }
 
-int main() {
+int main()
+{
     char board[3][3] = {{' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '}};
 
-    int mode;
-    cout << "Select Game mode: "<< endl
-         <<"1. Player Vs Player (P2P soon)" << endl
-         <<"2. Player Vs AI" << endl;
-    cout << "Enter mode (1 or 2): ";
-    cin >> mode;
-
     srand(static_cast<unsigned>(time(nullptr)));
-
-    switch (mode) {
-        case 1:
-            pvp(board);
-            break;
-        case 2:
-            pvAI(board);
-            break;
-        default:
-            cout << "Invalid mode. Exiting...\n";
-            break;
-    }
-
+    pvAI(board);
     return 0;
 }
-
