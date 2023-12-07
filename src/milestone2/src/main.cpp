@@ -34,23 +34,25 @@ int main() {
 
         int serverSocket = connectToServer();
         char currentPlayer = 'X';
-
-
+ 
         while (true) {
             char board[3][3];
             char state;
 
+            // get move from server
             recv(serverSocket, &board, sizeof(board), 0);
             
             printBoard(board);
             cout << endl;
 
             if (currentPlayer == 'X'){
+                // contains logic to send move to server
                 makeMove(serverSocket, board);
             }
             else 
                 cout << "waiting for player O..." << endl;
 
+            // get state from server
             recv(serverSocket, &state, sizeof(state), 0);
 
             switch (state) {

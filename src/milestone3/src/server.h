@@ -66,7 +66,7 @@ void printWaitingList()
     std::cout << "End of Waiting List\n";
 }
 
-// Client A acts is setup as client, Client B is setup as server
+// Client A is setup as client, Client B is setup as server
 void setupGame(Client *clientA)
 {
     Client *clientB = getClientFromWaitingList();
@@ -107,6 +107,7 @@ void setupGame(Client *clientA)
     close(clientB->socket);
 }
 
+// initializes each thread
 int handleThread(Client *client)
 {
     char gameMode;

@@ -1,16 +1,25 @@
 #include <iostream>
 #include "header.h"
 
+// connects the client to the server
 int connectToServer() {
+
+    // create client socket
     int clientSocket = (int) socket(AF_INET, SOCK_STREAM, 0);
     if (clientSocket == -1) {
         std::cerr << "Error creating socket\n";
         return -1;
     }
 
+    // get ip address of server from user
+    char server_ip_addr[INET_ADDRSTRLEN];
+    std::cout << "Enter the server ip address: ";
+    std::cin >> server_ip_addr;
+
+    // create server address and setup server settings
     sockaddr_in serverAddr{};
     serverAddr.sin_family = AF_INET;
-    serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    serverAddr.sin_addr.s_addr = inet_addr(server_ip_addr);
     serverAddr.sin_port = htons(12345);
 
     if (connect(clientSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1) {
@@ -24,6 +33,7 @@ int connectToServer() {
     return clientSocket;
 }
 
+// get input from user and send move to server
 void makeMove(int clientSocket, char board[3][3]) {
     int row, col;
 

@@ -47,11 +47,13 @@ bool isBoardFull(char board[3][3]) {
     return true; // No empty space found, board is full
 }
 
+// Game loop that runs on the server
 void playGame(int clientSocket) {
 
     char board[3][3] = {{' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '}};
     char currentPlayer = 'X';
 
+    // game loop runs until there is a win or a tie
     while (true) {
 
         send(clientSocket, &board, sizeof(board), 0);
@@ -59,7 +61,7 @@ void playGame(int clientSocket) {
 
         int row, col;
 
-        // Receive the move from the current player
+        // Receive the move from the client
         if (currentPlayer == 'X') {
 
             cout << "waiting for player X..." << endl;
@@ -82,6 +84,7 @@ void playGame(int clientSocket) {
 
         board[row][col] = currentPlayer;
 
+        // check if the game is ended, if so send game condition to client and break the loop
         if (checkWin(board, 'X')) {
             printBoard(board);
             cout << "Unfortunately you loses !!!!" << endl;
@@ -106,6 +109,7 @@ void playGame(int clientSocket) {
             break;
         }
 
+        // send the move to the clientS
         char st = '3';
         send(clientSocket, &st, sizeof(st), 0);
 

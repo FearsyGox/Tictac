@@ -5,6 +5,7 @@
 
 #include "header.h"
 
+// connects the client to the server
 int connectToServer(const char *server_ip_addr, int port)
 {
 
@@ -32,6 +33,7 @@ int connectToServer(const char *server_ip_addr, int port)
     return clientSocket;
 }
 
+// random port number is needed to to work with callback address
 int generateRandomPort()
 {
     random_device rd;
@@ -40,6 +42,7 @@ int generateRandomPort()
     return dis(gen);
 }
 
+// prompt user for a move and send it to the server
 void makeMove(int clientSocket, char board[3][3])
 {
     int row, col;
@@ -63,46 +66,47 @@ void makeMove(int clientSocket, char board[3][3])
     send(clientSocket, reinterpret_cast<const char *>(&col), sizeof(col), 0);
 }
 
+// game loop to play with AI
 void playerVsAI(int clientSocket)
 {
     char currentPlayer = 'X';
 
-        while (true)
+    while (true)
+    {
+
+        char board[3][3];
+        char state;
+
+        recv(clientSocket, &board, sizeof(board), 0);
+        printBoard(board);
+        cout << endl;
+
+        if (currentPlayer == 'X')
+            makeMove(clientSocket, board);
+        else
+            cout << "Waiting for player O toor...";
+
+        recv(clientSocket, &state, sizeof(state), 0);
+
+        switch (state)
         {
-
-            char board[3][3];
-            char state;
-
-            recv(clientSocket, &board, sizeof(board), 0);
-            printBoard(board);
-            cout << endl;
-
-            if (currentPlayer == 'X')
-                makeMove(clientSocket, board);
-            else
-                cout << "Waiting for player O toor...";
-
-            recv(clientSocket, &state, sizeof(state), 0);
-
-            switch (state)
-            {
-            case '0':
-                cout << "Unfortunately you loses !!!!" << endl;
-                goto stop;
-            case '1':
-                cout << "Wow you wins." << endl;
-                goto stop;
-            case '2':
-                cout << "It's a tie!" << endl;
-                goto stop;
-            }
-
-            currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+        case '0':
+            cout << "Unfortunately you loses !!!!" << endl;
+            goto stop;
+        case '1':
+            cout << "Wow you wins." << endl;
+            goto stop;
+        case '2':
+            cout << "It's a tie!" << endl;
+            goto stop;
         }
 
-    stop:
-        close(clientSocket);
-        //-----------------------------------
+        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+    }
+
+stop:
+    close(clientSocket);
+    //-----------------------------------
 }
 
 int runClient()
@@ -115,10 +119,10 @@ int runClient()
 
     cin >> gameMode;
 
-    //! NEED TO CHANGE IF USED ON SEPARATE MACHINES
-    char server_ip_addr[INET_ADDRSTRLEN] = "127.0.0.1";
-    // cout << "Enter the server ip address: ";
-    // cin >> server_ip_addr;
+    // prompt user for ip address
+    char server_ip_addr[INET_ADDRSTRLEN];
+    cout << "Enter the server ip address: ";
+    cin >> server_ip_addr;
 
     int clientSocket = connectToServer(server_ip_addr, 12345);
     if (clientSocket == -1)
@@ -142,7 +146,7 @@ int runClient()
         if (type == '0')
         {
             // work as a server
-            //===================================================
+            //----------------------------------------
             cout << endl;
             cout << "-------Acting as SERVER-------" << endl;
 
@@ -160,7 +164,7 @@ int runClient()
             // generate a port number and send it to the server
             int port = generateRandomPort();
             string stringPort = to_string(port);
-            send(clientSocket, stringPort.c_str(), sizeof(port)+1, 0);
+            send(clientSocket, stringPort.c_str(), sizeof(port) + 1, 0);
             close(clientSocket);
 
             cout << "Creating server on port number: " << port << endl;
@@ -201,7 +205,7 @@ int runClient()
             // work as a client
             //===================================================
             cout << endl;
-            cout << "-------Acting as CLIENT--------" <<endl;
+            cout << "-------Acting as CLIENT--------" << endl;
 
             char server_port_char[6];
             recv(clientSocket, server_ip_addr, sizeof(server_ip_addr), 0);
@@ -214,9 +218,9 @@ int runClient()
             clientSocket = connectToServer(server_ip_addr, server_port);
             char currentPlayer = 'X';
 
+            // client game loop
             while (true)
             {
-
                 char board[3][3];
                 char state;
 
